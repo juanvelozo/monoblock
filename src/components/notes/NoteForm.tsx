@@ -13,10 +13,14 @@ import { ICreateNoteDTO } from "@/types/notes/note.dto";
 import useModal, { Modal } from "../ui/Dialog";
 import Button from "../button/Button";
 import Container from "../common/container";
+import TagInput from "../input/TagInput";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function NoteForm(): JSX.Element {
   // states
   const [Loading, setLoading] = useState<boolean>(false);
+  const [categoryTagArray, setCategoryTagArray] = useState<string[]>([]);
+  const [showTagInput, setShowTagInput] = useState<boolean>(false);
   // hooks
   const { push, refresh } = useRouter();
   const { closeModal, isOpen, openModal } = useModal();
@@ -25,6 +29,7 @@ export default function NoteForm(): JSX.Element {
     handleSubmit,
     setValue,
     formState: { isDirty, isSubmitting, isSubmitSuccessful },
+    getValues,
   } = useForm<InferType<typeof schemaCreateNote>>({
     resolver: yupResolver(
       schemaCreateNote as ObjectSchema<ICreateNoteDTO, AnyObject, any, "">
@@ -52,6 +57,7 @@ export default function NoteForm(): JSX.Element {
             : "Nota sin título"
         );
         setValue("description", response.description);
+        setCategoryTagArray(response.tags);
       })
       .finally(() => setLoading(false));
   }
@@ -75,7 +81,7 @@ export default function NoteForm(): JSX.Element {
       title: event.title,
       updatedAt: new Date(),
       private: false,
-      tags: [],
+      tags: categoryTagArray.length ? categoryTagArray : [],
     };
     if (isSubmitSuccessful) {
       return;
@@ -89,7 +95,7 @@ export default function NoteForm(): JSX.Element {
         },
       });
 
-    await response.json();
+      await response.json();
       NavigateTo(String(params.noteId));
     } else {
       const response = await fetch("/api/note", {
@@ -136,7 +142,7 @@ export default function NoteForm(): JSX.Element {
             name="title"
             placeholder={Loading ? "Cargando..." : "Título"}
             disabled={Loading || isSubmitting}
-            className="bg-transparent focus-visible:outline-none text-black placeholder:text-slate-400 rounded-lg p-4 w-full disabled:text-slate-100 text-3xl md:text-4xl lg:text-6xl"
+            className="bg-transparent focus-visible:outline-none text-black placeholder:text-slate-400 rounded-lg py-4 w-full disabled:text-slate-100 text-3xl md:text-4xl lg:text-6xl"
             value=""
             props={{ autoFocus: true }}
           />
@@ -145,9 +151,72 @@ export default function NoteForm(): JSX.Element {
             name="description"
             placeholder={Loading ? "Cargando..." : "Descripción"}
             disabled={Loading || isSubmitting}
-            className="bg-transparent focus-visible:outline-none text-black placeholder:text-slate-400 rounded-lg p-4 w-full disabled:text-slate-100 text-md md:text-lg lg:text-xl"
+            className="bg-transparent focus-visible:outline-none text-black placeholder:text-slate-400 rounded-lg py-4 w-full disabled:text-slate-100 text-md md:text-lg lg:text-xl"
             value=""
           />
+          <Button
+            type="button"
+            onClick={() => setShowTagInput((prev) => !prev)}
+            color="default"
+            rounded="xl"
+          >
+            {showTagInput ? "Ocultar" : "Agregar categorías"}
+          </Button>
+          {showTagInput ? (
+            <TagInput
+              control={control}
+              name="tags"
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  if (event.currentTarget.value) {
+                    setCategoryTagArray((prev) => {
+                      const newArray = [...prev, event.currentTarget.value];
+                      return newArray;
+                    });
+                    setValue("tags", categoryTagArray);
+                  } else {
+                    return;
+                  }
+                }
+              }}
+            />
+          ) : null}
+          {categoryTagArray.length ? (
+            <AnimatePresence>
+              <div className="p-4 space-y-2">
+                <motion.div className="gap-2 flex w-full flex-wrap items-center overflow-hidden">
+                  {categoryTagArray.map((el, index) => (
+                    <motion.div
+                      // transition={{ bounce: false }}
+                      initial={{ opacity: 0, x: -100 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 100 }}
+                      key={index}
+                      className="bg-red-600 text-white rounded-lg flex items-center justify-between"
+                    >
+                      <span className="font-semibold px-2 text-sm select-none">
+                        {el}
+                      </span>
+                      <p
+                        className="self-center mr-1 text-sm rounded-full w-4 h-4 bg-red-400 bg-opacity-70 cursor-pointer flex items-center justify-center"
+                        onClick={() => {
+                          setCategoryTagArray((prev) => {
+                            const newAr = prev.filter((tag) => tag !== el);
+                            setValue("tags", newAr);
+                            return newAr;
+                          });
+                        }}
+                      >
+                        X
+                      </p>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </div>
+            </AnimatePresence>
+          ) : null}
+
           <div
             className={`flex ${
               params.noteId ? "justify-between" : "justify-end"

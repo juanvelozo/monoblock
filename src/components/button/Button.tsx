@@ -3,8 +3,10 @@ import {
   ButtonHTMLAttributes,
   DetailedHTMLProps,
   MouseEventHandler,
+  useEffect,
 } from "react";
 import Spinner, { SpinnerSize, SpinnerSizeType } from "../ui/Spinner";
+import { motion, useAnimate } from "framer-motion";
 
 type BtnColorType =
   | "default"
@@ -49,8 +51,12 @@ export default function Button({
   buttonProps,
   rounded = "sm",
   loading,
-  fullWidth,className,type
+  fullWidth,
+  className,
+  type,
 }: Props): JSX.Element {
+  const [scope, animate] = useAnimate();
+
   const ButtonColor: BtnColor = {
     danger: "bg-red-500 text-white hover:bg-red-600",
     dark: "bg-gray-800 text-white hover:bg-gray-900",
@@ -96,8 +102,20 @@ export default function Button({
     outlined: `!bg-transparent !hover:bg-current border-2 border-current ${ButtonTextColor[color]}`,
     text: `${ButtonTextColor[color]} outline-transparent`,
   };
+
+  function Resize() {
+    animate("button", { width: "100%" },{ duration: 1,ease:"easeInOut" });
+  }
+
+  useEffect(() => {
+    Resize();
+  }, []);
+
   return (
+    <div ref={scope} className={fullWidth ? "w-full" : "w-max"}>
+
     <button
+      
       className={`${className} py-2 ${fullWidth ? "w-full" : "w-max"} ${
         ButtonPill[rounded]
       } disabled:text-opacity-70 disabled:cursor-not-allowed ${
@@ -107,15 +125,16 @@ export default function Button({
       disabled={disabled}
       {...buttonProps}
       type={type}
-    >
+      >
       {loading ? (
         <Spinner
-          color={ButtonTextColor[color]}
-          size={SpinnerSize[size] as SpinnerSizeType}
+        color={ButtonTextColor[color]}
+        size={SpinnerSize[size] as SpinnerSizeType}
         />
-      ) : null}
+        ) : null}
       {children}
     </button>
+        </div>
   );
 }
 

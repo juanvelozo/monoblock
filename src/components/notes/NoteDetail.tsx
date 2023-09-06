@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import isLeapYear from "dayjs/plugin/relativeTime"; // import plugin
 import es from "dayjs/locale/es";
 import localeData from "dayjs/plugin/localeData";
+import CategoryTag from "../common/CategoryTags";
 
 dayjs.locale(es);
 dayjs.extend(localeData);
@@ -63,6 +64,9 @@ export default function NoteDetail({ data }: INoteDetailProps): JSX.Element {
           :null}
         </div>
       </div>
+      {data.tags?.length ? (
+            <CategoryTag tags={data.tags}/>
+          ) : null}
     </Suspense>
   );
 }

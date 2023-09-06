@@ -22,18 +22,18 @@ import {
   interface Props<T extends FieldValues> {
     props?:  DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
 
-    iconStart?: FC<SVGProps<SVGSVGElement>> | undefined
-    iconEnd?: FC<SVGProps<SVGSVGElement>> | undefined
+    // iconStart?: FC<SVGProps<SVGSVGElement>> | undefined
+    // iconEnd?: FC<SVGProps<SVGSVGElement>> | undefined
     placeholder?: string | undefined
     control: Control<T>
     helperText?: string
     defaultValue?: any
     disabled?: boolean
     required?: boolean
-    addon?: ReactNode
+    // addon?: ReactNode
     inputId?: string
     type?: InputType
-    size?: InputSize
+    // size?: InputSize
     value?: string
     errorClassname?: string
     helperTextClassname?: string
@@ -50,17 +50,13 @@ import {
     type = 'text',
     placeholder,
     helperText,
-    iconStart,
     className,
     disabled,
     required,
     widthMax,
     control,
-    iconEnd,
     inputId,
-    addon,
     props,
-    size,
   }: Props<T>): JSX.Element {
     const {
       field: { onChange, onBlur, value, name },
