@@ -1,12 +1,9 @@
-"use client";
 import {
   ButtonHTMLAttributes,
   DetailedHTMLProps,
   MouseEventHandler,
-  useEffect,
 } from "react";
 import Spinner, { SpinnerSize, SpinnerSizeType } from "../ui/Spinner";
-import { motion, useAnimate } from "framer-motion";
 
 type BtnColorType =
   | "default"
@@ -55,8 +52,6 @@ export default function Button({
   className,
   type,
 }: Props): JSX.Element {
-  const [scope, animate] = useAnimate();
-
   const ButtonColor: BtnColor = {
     danger: "bg-red-500 text-white hover:bg-red-600",
     dark: "bg-gray-800 text-white hover:bg-gray-900",
@@ -103,16 +98,9 @@ export default function Button({
     text: `${ButtonTextColor[color]} outline-transparent`,
   };
 
-  function Resize() {
-    animate("button", { width: "100%" },{ duration: 1,ease:"easeInOut" });
-  }
 
-  useEffect(() => {
-    Resize();
-  }, []);
 
   return (
-    <div ref={scope} className={fullWidth ? "w-full" : "w-max"}>
 
     <button
       
@@ -134,7 +122,6 @@ export default function Button({
         ) : null}
       {children}
     </button>
-        </div>
   );
 }
 

@@ -14,9 +14,17 @@ model Note {
   id          Int      @id @default(autoincrement())
   title       String?
   description String?
-  tags        String[] @default([])
+  tags        Tag[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
   privateNote Boolean  @default(false)
   fixed       Boolean? @default(false)
+}
+
+model Tag {
+  id     String @id @default(uuid())
+  name   String @unique
+  color  String
+  Note   Note?  @relation(fields: [noteId], references: [id])
+  noteId Int?
 }

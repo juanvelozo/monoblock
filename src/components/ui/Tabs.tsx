@@ -4,7 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { FastActionButton } from "../button/FAB";
 import { routes } from "@/constants/routes";
-export const Navbar = ({ tabView }: ITabViewProps): JSX.Element => {
+export const Navbar = ({ tabView }: ITabViewProps): JSX.Element|null => {
   //constants
   //states
   //   const [currentPath, setCurrentPath] = useState<string>("");
@@ -16,7 +16,9 @@ export const Navbar = ({ tabView }: ITabViewProps): JSX.Element => {
   //effects
 
   //render
-
+  if(pathName !== routes.notes && pathName !== routes.profile){
+    return null
+  }
   return (
     <>
       {pathName === routes.notes ? (

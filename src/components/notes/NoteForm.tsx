@@ -174,7 +174,7 @@ export default function NoteForm(): JSX.Element {
                       const newArray = [...prev, event.currentTarget.value];
                       return newArray;
                     });
-                    setValue("tags", categoryTagArray);
+                    setValue("tags", [""]);
                   } else {
                     return;
                   }
@@ -201,9 +201,9 @@ export default function NoteForm(): JSX.Element {
                       <p
                         className="self-center mr-1 text-sm rounded-full w-4 h-4 bg-red-400 bg-opacity-70 cursor-pointer flex items-center justify-center"
                         onClick={() => {
+                          // change this to the array index, not the value
                           setCategoryTagArray((prev) => {
                             const newAr = prev.filter((tag) => tag !== el);
-                            setValue("tags", newAr);
                             return newAr;
                           });
                         }}
