@@ -57,16 +57,20 @@ export default function NoteDetail({ data }: INoteDetailProps): JSX.Element {
           <span className="text-xs font-light self-end">
             Hace {dayjs(data.createdAt).fromNow(true)}
           </span>
-          {dayjs(data.updatedAt).isAfter(data.createdAt) ?
-          <span className="text-xs font-medium self-end">
-            (Editado hace {dayjs(data.updatedAt).fromNow(true)})
-          </span>
-          :null}
-        </div>
-      </div>
-      {data.tags?.length ? (
-            <CategoryTag tags={data.tags}/>
+          {dayjs(data.updatedAt).isAfter(data.createdAt) ? (
+            <span className="text-xs font-medium self-end">
+              (Editado hace {dayjs(data.updatedAt).fromNow(true)})
+            </span>
           ) : null}
+        </div>
+
+        {data.tags?.length ? (
+          <div className="w-full gap-1 flex justify-end flex-col">
+            <span className="font-light self-end">Etiquetas:</span>
+            <CategoryTag tags={data.tags} />
+          </div>
+        ) : null}
+      </div>
     </Suspense>
   );
 }
